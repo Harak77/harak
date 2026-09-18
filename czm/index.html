@@ -138,7 +138,7 @@ body.camera-open .cameraFloat{display:none}
     <div class="actions">
       <button class="primary" id="celebrate">🎉 送上 99999 份祝福</button>
       <button class="secondary" id="copyBtn">复制祝福文案</button>
-      <button class="primary" id="openCamera">📷 查看特别惊喜</button>
+      <button class="primary" id="openCamera">📷 开启自拍惊喜</button>
     </div>
   </section>
 
@@ -148,15 +148,15 @@ body.camera-open .cameraFloat{display:none}
   </footer>
 </div>
 
-<button id="cameraFloat" class="cameraFloat">📷 查看特别惊喜</button>
+<button id="cameraFloat" class="cameraFloat">📷 开启自拍惊喜</button>
 
 <div id="cameraModal" class="cameraModal" aria-hidden="true">
   <div class="cameraTop">
-    <div class="cameraTitle">✨ 特别惊喜模式</div>
+    <div class="cameraTitle">✨ 自拍惊喜模式</div>
     <button id="closeCamera" class="closeCamera">关闭</button>
   </div>
   <video id="cameraVideo" autoplay playsinline muted></video>
-  <div class="cameraHint">相机画面仅在本机显示，不会上传或保存</div>
+  <div class="cameraHint">前置自拍画面仅在本机显示，不会上传或保存</div>
 </div>
 
 <div class="toast" id="toast">祝福已送达：百年好合 × 3 🎊</div>
@@ -213,14 +213,14 @@ const openCameraBtn=document.getElementById('openCamera');
 const closeCameraBtn=document.getElementById('closeCamera');
 const cameraFloat=document.getElementById('cameraFloat');
 
-async function openRearCamera(){
+async function openFrontCamera(){
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
     toastMsg('当前浏览器不支持网页相机功能');
     return;
   }
   try{
     cameraStream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:{ideal:'environment'}},
+      video:{facingMode:{ideal:'user'}},
       audio:false
     });
     cameraVideo.srcObject=cameraStream;
@@ -241,7 +241,7 @@ async function openRearCamera(){
     }
   }
 }
-function closeRearCamera(){
+function closeFrontCamera(){
   if(cameraStream){
     cameraStream.getTracks().forEach(track=>track.stop());
     cameraStream=null;
@@ -251,11 +251,11 @@ function closeRearCamera(){
   cameraModal.setAttribute('aria-hidden','true');
   document.body.classList.remove('camera-open');
 }
-openCameraBtn.addEventListener('click',openRearCamera);
-cameraFloat.addEventListener('click',openRearCamera);
-closeCameraBtn.addEventListener('click',closeRearCamera);
-document.addEventListener('visibilitychange',()=>{if(document.hidden) closeRearCamera();});
-window.addEventListener('pagehide',closeRearCamera);
+openCameraBtn.addEventListener('click',openFrontCamera);
+cameraFloat.addEventListener('click',openFrontCamera);
+closeCameraBtn.addEventListener('click',closeFrontCamera);
+document.addEventListener('visibilitychange',()=>{if(document.hidden) closeFrontCamera();});
+window.addEventListener('pagehide',closeFrontCamera);
 
 setTimeout(celebrate,700);
 </script>
