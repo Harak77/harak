@@ -81,6 +81,13 @@ footer{text-align:center;color:#9a7b7c;font-size:11px;line-height:1.9;margin-top
 @keyframes petal{to{transform:translate3d(var(--x),110vh,0) rotate(720deg);opacity:.7}}
 .toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);opacity:0;background:#4e1d25;color:#fff;border:1px solid #ffffff26;border-radius:999px;padding:11px 16px;font-size:13px;z-index:60;transition:.25s;white-space:nowrap;box-shadow:0 14px 34px #0004}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+.cameraModal{position:fixed;inset:0;background:#000;z-index:9999;display:none}
+.cameraModal.show{display:block}
+#cameraVideo{width:100%;height:100%;object-fit:cover;background:#000}
+.cameraTop{position:absolute;top:0;left:0;right:0;z-index:2;display:flex;justify-content:space-between;align-items:center;padding:calc(14px + env(safe-area-inset-top)) 16px 18px;background:linear-gradient(180deg,rgba(0,0,0,.68),rgba(0,0,0,0))}
+.cameraTitle{color:#fff;font-size:14px;font-weight:800;letter-spacing:.05em}
+.closeCamera{border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.32);color:#fff;border-radius:999px;padding:10px 14px;font-size:13px;font-weight:800;backdrop-filter:blur(10px)}
+.cameraHint{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:2;color:#fff;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);border-radius:999px;padding:10px 14px;font-size:12px;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
 </style>
 </head>
 <body>
@@ -122,6 +129,7 @@ footer{text-align:center;color:#9a7b7c;font-size:11px;line-height:1.9;margin-top
     <div class="actions">
       <button class="primary" id="celebrate">🎉 送上 99999 份祝福</button>
       <button class="secondary" id="copyBtn">复制祝福文案</button>
+      <button class="primary" id="openCamera">📷 查看特别惊喜</button>
     </div>
   </section>
 
@@ -129,6 +137,15 @@ footer{text-align:center;color:#9a7b7c;font-size:11px;line-height:1.9;margin-top
     CZM · FRIENDS FOREVER<br>
     本页面为朋友间娱乐祝福页面，纯属玩笑，不代表真实婚姻登记或正式婚礼信息。
   </footer>
+</div>
+
+<div id="cameraModal" class="cameraModal" aria-hidden="true">
+  <div class="cameraTop">
+    <div class="cameraTitle">✨ 特别惊喜模式</div>
+    <button id="closeCamera" class="closeCamera">关闭</button>
+  </div>
+  <video id="cameraVideo" autoplay playsinline muted></video>
+  <div class="cameraHint">相机画面仅在本机显示，不会上传或保存</div>
 </div>
 
 <div class="toast" id="toast">祝福已送达：百年好合 × 3 🎊</div>
@@ -178,6 +195,52 @@ document.getElementById('copyBtn').addEventListener('click',async()=>{
   try{await navigator.clipboard.writeText(txt);toastMsg('祝福文案已复制 ✨');}
   catch(e){toastMsg('长按页面即可复制祝福文案');}
 });
+let cameraStream=null;
+const cameraModal=document.getElementById('cameraModal');
+const cameraVideo=document.getElementById('cameraVideo');
+const openCameraBtn=document.getElementById('openCamera');
+const closeCameraBtn=document.getElementById('closeCamera');
+
+async function openRearCamera(){
+  if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+    toastMsg('当前浏览器不支持网页相机功能');
+    return;
+  }
+  try{
+    cameraStream=await navigator.mediaDevices.getUserMedia({
+      video:{facingMode:{ideal:'environment'}},
+      audio:false
+    });
+    cameraVideo.srcObject=cameraStream;
+    cameraModal.classList.add('show');
+    cameraModal.setAttribute('aria-hidden','false');
+    try{await cameraVideo.play();}catch(e){}
+  }catch(err){
+    try{
+      cameraStream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
+      cameraVideo.srcObject=cameraStream;
+      cameraModal.classList.add('show');
+      cameraModal.setAttribute('aria-hidden','false');
+      try{await cameraVideo.play();}catch(e){}
+    }catch(e){
+      toastMsg('没有获得相机权限，请在浏览器设置中允许相机');
+    }
+  }
+}
+function closeRearCamera(){
+  if(cameraStream){
+    cameraStream.getTracks().forEach(track=>track.stop());
+    cameraStream=null;
+  }
+  cameraVideo.srcObject=null;
+  cameraModal.classList.remove('show');
+  cameraModal.setAttribute('aria-hidden','true');
+}
+openCameraBtn.addEventListener('click',openRearCamera);
+closeCameraBtn.addEventListener('click',closeRearCamera);
+document.addEventListener('visibilitychange',()=>{if(document.hidden) closeRearCamera();});
+window.addEventListener('pagehide',closeRearCamera);
+
 setTimeout(celebrate,700);
 </script>
 </body>
