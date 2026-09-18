@@ -88,6 +88,15 @@ footer{text-align:center;color:#9a7b7c;font-size:11px;line-height:1.9;margin-top
 .cameraTitle{color:#fff;font-size:14px;font-weight:800;letter-spacing:.05em}
 .closeCamera{border:1px solid rgba(255,255,255,.28);background:rgba(0,0,0,.32);color:#fff;border-radius:999px;padding:10px 14px;font-size:13px;font-weight:800;backdrop-filter:blur(10px)}
 .cameraHint{position:absolute;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:2;color:#fff;background:rgba(0,0,0,.42);border:1px solid rgba(255,255,255,.16);backdrop-filter:blur(10px);border-radius:999px;padding:10px 14px;font-size:12px;white-space:nowrap;max-width:90vw;overflow:hidden;text-overflow:ellipsis}
+.cameraFloat{
+  position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom));transform:translateX(-50%);
+  z-index:9000;border:0;border-radius:999px;padding:15px 22px;
+  background:linear-gradient(90deg,#8f2636,#c24756);color:#fff;font-weight:900;font-size:15px;
+  box-shadow:0 12px 34px rgba(93,25,36,.38),0 0 0 1px rgba(255,255,255,.18) inset;
+  backdrop-filter:blur(12px);white-space:nowrap
+}
+.cameraFloat:active{transform:translateX(-50%) scale(.98)}
+body.camera-open .cameraFloat{display:none}
 </style>
 </head>
 <body>
@@ -138,6 +147,8 @@ footer{text-align:center;color:#9a7b7c;font-size:11px;line-height:1.9;margin-top
     本页面为朋友间娱乐祝福页面，纯属玩笑，不代表真实婚姻登记或正式婚礼信息。
   </footer>
 </div>
+
+<button id="cameraFloat" class="cameraFloat">📷 查看特别惊喜</button>
 
 <div id="cameraModal" class="cameraModal" aria-hidden="true">
   <div class="cameraTop">
@@ -200,6 +211,7 @@ const cameraModal=document.getElementById('cameraModal');
 const cameraVideo=document.getElementById('cameraVideo');
 const openCameraBtn=document.getElementById('openCamera');
 const closeCameraBtn=document.getElementById('closeCamera');
+const cameraFloat=document.getElementById('cameraFloat');
 
 async function openRearCamera(){
   if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
@@ -214,6 +226,7 @@ async function openRearCamera(){
     cameraVideo.srcObject=cameraStream;
     cameraModal.classList.add('show');
     cameraModal.setAttribute('aria-hidden','false');
+    document.body.classList.add('camera-open');
     try{await cameraVideo.play();}catch(e){}
   }catch(err){
     try{
@@ -221,6 +234,7 @@ async function openRearCamera(){
       cameraVideo.srcObject=cameraStream;
       cameraModal.classList.add('show');
       cameraModal.setAttribute('aria-hidden','false');
+      document.body.classList.add('camera-open');
       try{await cameraVideo.play();}catch(e){}
     }catch(e){
       toastMsg('没有获得相机权限，请在浏览器设置中允许相机');
@@ -235,8 +249,10 @@ function closeRearCamera(){
   cameraVideo.srcObject=null;
   cameraModal.classList.remove('show');
   cameraModal.setAttribute('aria-hidden','true');
+  document.body.classList.remove('camera-open');
 }
 openCameraBtn.addEventListener('click',openRearCamera);
+cameraFloat.addEventListener('click',openRearCamera);
 closeCameraBtn.addEventListener('click',closeRearCamera);
 document.addEventListener('visibilitychange',()=>{if(document.hidden) closeRearCamera();});
 window.addEventListener('pagehide',closeRearCamera);
