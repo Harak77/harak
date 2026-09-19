@@ -1,77 +1,114 @@
 <!doctype html>
 <html lang="zh-CN">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-  <meta name="theme-color" content="#0b0b10" />
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#07080d">
   <title>Surprise</title>
   <style>
     :root{
-      --bg:#08090d;
-      --card:rgba(255,255,255,.07);
+      --bg:#07080d;
+      --text:#f7f8fb;
+      --muted:rgba(247,248,251,.58);
       --line:rgba(255,255,255,.12);
-      --text:#f7f7fb;
-      --muted:#a5a8b4;
-      --accent:#ffffff;
-      --shadow:0 30px 80px rgba(0,0,0,.45);
     }
     *{box-sizing:border-box}
-    html,body{margin:0;min-height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",Arial,sans-serif}
-    body{min-height:100svh;overflow:hidden}
-    .bg{position:fixed;inset:0;background:
-      radial-gradient(circle at 50% 28%,rgba(109,96,255,.25),transparent 34%),
-      radial-gradient(circle at 20% 85%,rgba(0,210,255,.14),transparent 28%),
-      radial-gradient(circle at 85% 75%,rgba(255,82,139,.12),transparent 28%),
-      linear-gradient(180deg,#11121a 0%,#08090d 58%,#050609 100%);
-      filter:saturate(110%);
+    html,body{margin:0;width:100%;min-height:100%;background:var(--bg);color:var(--text)}
+    body{
+      min-height:100svh;overflow:hidden;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","PingFang SC","Helvetica Neue",Arial,sans-serif;
     }
-    .grain{position:fixed;inset:-50%;opacity:.05;pointer-events:none;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.7'/%3E%3C/svg%3E")}
-    main{position:relative;z-index:1;min-height:100svh;display:grid;place-items:center;padding:24px}
+    .bg{
+      position:fixed;inset:0;
+      background:
+        radial-gradient(circle at 50% 30%,rgba(116,100,255,.30),transparent 30%),
+        radial-gradient(circle at 12% 82%,rgba(0,210,255,.15),transparent 25%),
+        radial-gradient(circle at 88% 78%,rgba(255,80,145,.13),transparent 24%),
+        linear-gradient(180deg,#11131d 0%,#08090e 58%,#05060a 100%);
+    }
+    .orb{
+      position:fixed;width:260px;height:260px;border-radius:50%;left:50%;top:50%;
+      transform:translate(-50%,-50%);filter:blur(45px);opacity:.32;
+      background:conic-gradient(from 0deg,#7e6bff,#67d9ff,#ff6da9,#7e6bff);
+      animation:spin 8s linear infinite;
+    }
+    @keyframes spin{to{transform:translate(-50%,-50%) rotate(360deg)}}
+    main{
+      position:relative;z-index:2;min-height:100svh;display:grid;place-items:center;
+      padding:24px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom));
+    }
     .hero{width:min(92vw,520px);text-align:center}
-    .eyebrow{font-size:12px;letter-spacing:.34em;text-transform:uppercase;color:rgba(255,255,255,.42);margin-bottom:18px}
-    h1{margin:0;font-size:clamp(34px,10vw,64px);line-height:.95;letter-spacing:-.05em;font-weight:750}
-    .sub{margin:18px auto 34px;max-width:350px;color:var(--muted);font-size:15px;line-height:1.7}
+    .tag{font-size:11px;letter-spacing:.34em;color:rgba(255,255,255,.38);text-transform:uppercase;margin-bottom:18px}
+    h1{margin:0;font-size:clamp(40px,11vw,68px);line-height:.96;letter-spacing:-.055em;font-weight:780}
+    p{margin:18px auto 34px;max-width:320px;color:var(--muted);font-size:15px;line-height:1.7}
     .surprise{
-      appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;
-      min-width:min(82vw,320px);height:76px;border-radius:24px;padding:0 34px;
-      color:#0b0b10;background:linear-gradient(180deg,#fff 0%,#e9eaf2 100%);
-      font-size:24px;font-weight:750;letter-spacing:.08em;box-shadow:0 18px 55px rgba(255,255,255,.16),0 8px 30px rgba(0,0,0,.42);
-      transition:transform .18s ease,box-shadow .18s ease,filter .18s ease;
+      position:relative;isolation:isolate;appearance:none;border:0;cursor:pointer;
+      width:min(84vw,330px);height:82px;border-radius:26px;
+      color:#090a0f;background:linear-gradient(180deg,#fff,#eceef5);
+      font-size:25px;font-weight:800;letter-spacing:.12em;
+      box-shadow:0 18px 60px rgba(255,255,255,.16),0 14px 40px rgba(0,0,0,.45);
+      transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;
       -webkit-tap-highlight-color:transparent;
     }
+    .surprise::before{
+      content:"";position:absolute;z-index:-1;inset:-2px;border-radius:28px;
+      background:linear-gradient(120deg,rgba(140,120,255,.7),rgba(111,226,255,.45),rgba(255,112,165,.55));
+      filter:blur(18px);opacity:.55;animation:pulse 2.6s ease-in-out infinite;
+    }
+    @keyframes pulse{50%{opacity:.9;transform:scale(1.035)}}
     .surprise:active{transform:scale(.97)}
-    .surprise:hover{filter:brightness(1.03);box-shadow:0 24px 70px rgba(255,255,255,.20),0 12px 36px rgba(0,0,0,.48)}
-    .hint{margin-top:18px;font-size:12px;color:rgba(255,255,255,.28)}
-    .overlay{position:fixed;inset:0;z-index:10;display:none;place-items:center;padding:22px;background:rgba(3,4,7,.74);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px)}
+    .hint{margin-top:18px;color:rgba(255,255,255,.24);font-size:12px}
+
+    .overlay{
+      position:fixed;inset:0;z-index:10;display:none;place-items:center;padding:22px;
+      background:rgba(3,4,8,.75);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    }
     .overlay.show{display:grid}
-    .dialog{width:min(92vw,430px);padding:26px;border:1px solid var(--line);border-radius:28px;background:rgba(21,22,31,.88);box-shadow:var(--shadow)}
-    .dialog h2{margin:0 0 10px;font-size:25px;letter-spacing:-.02em}
-    .dialog p{margin:0;color:#b8bbc7;line-height:1.65;font-size:14px}
+    .dialog{
+      width:min(92vw,430px);padding:26px;border-radius:28px;
+      border:1px solid var(--line);background:rgba(20,21,30,.92);
+      box-shadow:0 30px 90px rgba(0,0,0,.55)
+    }
+    .dialog h2{margin:0 0 10px;font-size:25px;letter-spacing:-.025em}
+    .dialog p{margin:0;color:#b9bcc8;font-size:14px;line-height:1.65}
     .actions{display:flex;gap:12px;margin-top:22px}
-    .btn{flex:1;height:52px;border-radius:16px;border:1px solid var(--line);font-size:15px;font-weight:650;cursor:pointer}
+    .btn{flex:1;height:52px;border-radius:16px;border:1px solid var(--line);font-size:15px;font-weight:700;cursor:pointer}
     .cancel{background:rgba(255,255,255,.06);color:#fff}
-    .continue{background:#fff;color:#0b0b10;border-color:#fff}
+    .continue{background:#fff;color:#0a0b10;border-color:#fff}
+    .error{display:none;margin-top:16px;padding:13px 14px;border-radius:14px;background:rgba(255,76,94,.12);border:1px solid rgba(255,76,94,.2);color:#ffc8ce;font-size:13px;line-height:1.55}
+    .error.show{display:block}
+
     .cameraView{position:fixed;inset:0;z-index:20;display:none;background:#000}
     .cameraView.show{display:block}
     video{width:100%;height:100%;object-fit:cover;background:#000;transform:scaleX(-1)}
-    .cameraUI{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.32),transparent 18%,transparent 72%,rgba(0,0,0,.42))}
-    .topbar{position:absolute;top:max(18px,env(safe-area-inset-top));left:18px;right:18px;display:flex;justify-content:space-between;align-items:center;pointer-events:auto}
-    .pill{border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.34);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#fff;border-radius:999px;padding:10px 14px;font-size:13px}
-    .close{border:0;cursor:pointer}
-    .status{position:absolute;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);white-space:nowrap;color:rgba(255,255,255,.9);font-size:13px;background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.16);border-radius:999px;padding:10px 14px;backdrop-filter:blur(10px)}
-    .error{display:none;margin-top:16px;padding:13px 14px;border-radius:14px;background:rgba(255,76,94,.12);border:1px solid rgba(255,76,94,.2);color:#ffc5cb;font-size:13px;line-height:1.55}
-    .error.show{display:block}
+    .shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(0,0,0,.36),transparent 19%,transparent 73%,rgba(0,0,0,.48))}
+    .topbar{
+      position:absolute;top:max(18px,env(safe-area-inset-top));left:18px;right:18px;
+      display:flex;align-items:center;justify-content:space-between;pointer-events:auto
+    }
+    .pill{
+      color:#fff;border:1px solid rgba(255,255,255,.22);background:rgba(0,0,0,.34);
+      border-radius:999px;padding:10px 14px;font-size:13px;
+      backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px)
+    }
+    .close{cursor:pointer}
+    .status{
+      position:absolute;left:50%;bottom:max(28px,env(safe-area-inset-bottom));transform:translateX(-50%);
+      white-space:nowrap;color:rgba(255,255,255,.9);font-size:13px;
+      background:rgba(0,0,0,.34);border:1px solid rgba(255,255,255,.16);
+      border-radius:999px;padding:10px 14px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)
+    }
   </style>
 </head>
 <body>
   <div class="bg"></div>
-  <div class="grain"></div>
+  <div class="orb"></div>
 
   <main>
     <section class="hero">
-      <div class="eyebrow">for you</div>
-      <h1>有个东西<br>想给你看</h1>
-      <p class="sub">别想太多。点一下就知道了。</p>
+      <div class="tag">JUST FOR YOU</div>
+      <h1>有个惊喜<br>给你</h1>
+      <p>别想太多。点一下就知道了。</p>
       <button class="surprise" id="surpriseBtn" type="button">惊喜</button>
       <div class="hint">Tap to reveal</div>
     </section>
@@ -80,7 +117,7 @@
   <div class="overlay" id="consent" aria-hidden="true">
     <div class="dialog" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
       <h2 id="consentTitle">准备好了吗？</h2>
-      <p>继续后，浏览器会请求使用你的前置摄像头，并只在当前页面实时显示画面。页面不会拍照、保存或上传任何图像。</p>
+      <p>继续后，浏览器会请求使用前置摄像头，并只在当前页面实时显示画面。页面不会拍照、保存或上传任何图像。</p>
       <div id="error" class="error"></div>
       <div class="actions">
         <button class="btn cancel" id="cancelBtn" type="button">取消</button>
@@ -90,13 +127,13 @@
   </div>
 
   <section class="cameraView" id="cameraView" aria-hidden="true">
-    <video id="video" autoplay muted playsinline></video>
-    <div class="cameraUI"></div>
+    <video id="video" autoplay muted playsinline webkit-playsinline></video>
+    <div class="shade"></div>
     <div class="topbar">
       <div class="pill">Surprise ✦</div>
       <button class="pill close" id="closeBtn" type="button">关闭</button>
     </div>
-    <div class="status">仅本机实时预览 · 不保存、不上传</div>
+    <div class="status">实时预览 · 不保存 · 不上传</div>
   </section>
 
   <script>
@@ -110,20 +147,20 @@
     const errorBox = document.getElementById('error');
     let stream = null;
 
-    function showConsent() {
+    function showConsent(){
       errorBox.classList.remove('show');
       errorBox.textContent = '';
       consent.classList.add('show');
       consent.setAttribute('aria-hidden','false');
     }
 
-    function hideConsent() {
+    function hideConsent(){
       consent.classList.remove('show');
       consent.setAttribute('aria-hidden','true');
     }
 
-    function stopCamera() {
-      if (stream) {
+    function stopCamera(){
+      if(stream){
         stream.getTracks().forEach(track => track.stop());
         stream = null;
       }
@@ -132,31 +169,37 @@
       cameraView.setAttribute('aria-hidden','true');
     }
 
-    async function startCamera() {
+    async function requestSelfieCamera(){
+      return navigator.mediaDevices.getUserMedia({
+        video:{
+          facingMode:{ideal:'user'},
+          width:{ideal:1280},
+          height:{ideal:720}
+        },
+        audio:false
+      });
+    }
+
+    async function startCamera(){
       errorBox.classList.remove('show');
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        errorBox.textContent = '当前浏览器不支持网页摄像头访问。请使用 Safari、Chrome 或其他现代浏览器，并确保网页通过 HTTPS 打开。';
+
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia){
+        errorBox.textContent = '当前浏览器不支持网页摄像头访问。请使用 Safari、Chrome 等现代浏览器，并通过 HTTPS 打开。';
         errorBox.classList.add('show');
         return;
       }
-      try {
-        stream = await navigator.mediaDevices.getUserMedia({
-          video: {
-            facingMode: { ideal: 'user' },
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          },
-          audio: false
-        });
+
+      try{
+        stream = await requestSelfieCamera();
         hideConsent();
         video.srcObject = stream;
         cameraView.classList.add('show');
         cameraView.setAttribute('aria-hidden','false');
-        try { await video.play(); } catch (_) {}
-      } catch (err) {
+        try{ await video.play(); }catch(_){}
+      }catch(err){
         const denied = err && (err.name === 'NotAllowedError' || err.name === 'SecurityError');
         errorBox.textContent = denied
-          ? '没有获得摄像头权限。你可以在浏览器的网站权限设置里允许摄像头后再试。'
+          ? '没有获得摄像头权限。允许浏览器访问摄像头后即可继续。'
           : '无法启动摄像头，请检查浏览器权限或设备摄像头状态后重试。';
         errorBox.classList.add('show');
       }
@@ -166,9 +209,8 @@
     cancelBtn.addEventListener('click', hideConsent);
     continueBtn.addEventListener('click', startCamera);
     closeBtn.addEventListener('click', stopCamera);
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden && stream) stopCamera();
-    });
+    window.addEventListener('pagehide', stopCamera);
+    document.addEventListener('visibilitychange',()=>{ if(document.hidden && stream) stopCamera(); });
   </script>
 </body>
 </html>
